@@ -1,6 +1,6 @@
 "use client";
 import { z } from "zod";
-import React from "react";
+import React, { useState } from "react";
 import { Separator } from "../ui/separator";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,6 +16,8 @@ import {
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
+import ImageUpload from "../custom ui/ImageUpload";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   title: z.string().min(2).max(50),
@@ -24,6 +26,8 @@ const formSchema = z.object({
 });
 
 export const CollectionForm = () => {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -34,9 +38,15 @@ export const CollectionForm = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    try {
+      setLoading(true);
+      const res = await fetch("/api/collections", {
+        method: "POST",
+        body: JSON.stringify(values),
+      });
+    } catch (error) {
+      console.log("[collections_POST", error);
+    }
   };
   return (
     <div className="p-10">
@@ -74,7 +84,35 @@ export const CollectionForm = () => {
               </FormItem>
             )}
           />
-          <Button type="submit">Submit</Button>
+          <FormField
+            control={form.control}
+            name="image"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Image</FormLabel>
+                <FormControl>
+                  <ImageUpload
+                    value={field.value ? [field.value] : []}
+                    onChange={(url) => field.onChange(url)}
+                    onRemove={() => field.onChange("")}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex gap-2">
+            <Button type="submit" className="bg-blue-1 text-white">
+              Submit
+            </Button>
+            <Button
+              type="button"
+              onClick={() => router.push("/collections")}
+              className="bg-blue-1 text-white"
+            >
+              Discard
+            </Button>
+          </div>
         </form>
       </Form>
     </div>

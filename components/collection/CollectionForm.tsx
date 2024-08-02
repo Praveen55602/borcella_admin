@@ -18,6 +18,7 @@ import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import ImageUpload from "../custom ui/ImageUpload";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
   title: z.string().min(2).max(50),
@@ -40,11 +41,19 @@ export const CollectionForm = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true);
+      console.log("kdfjk");
+
       const res = await fetch("/api/collections", {
         method: "POST",
         body: JSON.stringify(values),
       });
+      if (res.ok) {
+        setLoading(false);
+        toast.success("Collection created successfully");
+        router.push("/collections");
+      }
     } catch (error) {
+      toast.error("Something went wrong! please try again.");
       console.log("[collections_POST", error);
     }
   };
@@ -61,7 +70,11 @@ export const CollectionForm = () => {
               <FormItem>
                 <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <Input placeholder="Title" {...field} />
+                  <Input
+                    placeholder="Title"
+                    {...field}
+                    // onKeyDown={handleKeyPress}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -69,15 +82,16 @@ export const CollectionForm = () => {
           />
           <FormField
             control={form.control}
-            name="title"
+            name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Desription</FormLabel>
+                <FormLabel>Description</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Enter description"
-                    rows={5}
+                    placeholder="Description"
                     {...field}
+                    rows={5}
+                    // onKeyDown={handleKeyPress}
                   />
                 </FormControl>
                 <FormMessage />
@@ -101,7 +115,7 @@ export const CollectionForm = () => {
               </FormItem>
             )}
           />
-          <div className="flex gap-2">
+          <div className="flex gap-10">
             <Button type="submit" className="bg-blue-1 text-white">
               Submit
             </Button>

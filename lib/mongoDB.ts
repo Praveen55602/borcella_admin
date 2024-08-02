@@ -11,13 +11,15 @@ export const connectToDB = async (): Promise<void> => {
   }
 
   try {
-    await mongoose.connect(process.env.MONGODB_URL || "", {
+    console.log("url is", process.env.MONGODB_URL);
+
+    await mongoose.connect(process.env.MONGODB_URL!, {
       dbName: "Borcelle_Admin",
     });
 
     isConnected = true;
     console.log("MongoDB is connected");
   } catch (err) {
-    console.log(err);
+    console.log("error while connnecting to database", err);
   }
 };

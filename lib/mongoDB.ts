@@ -11,8 +11,6 @@ export const connectToDB = async (): Promise<void> => {
   }
 
   try {
-    console.log("url is", process.env.MONGODB_URL);
-
     await mongoose.connect(process.env.MONGODB_URL!, {
       dbName: "Borcelle_Admin",
     });

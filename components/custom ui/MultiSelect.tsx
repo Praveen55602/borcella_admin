@@ -2,9 +2,11 @@
 
 import {
   Command,
+  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from "@/components/ui/command";
 import { useState } from "react";
 import { Badge } from "../ui/badge";
@@ -69,21 +71,24 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
 
       <div className="relative mt-2">
         {open && (
-          <CommandGroup className="absolute w-full z-30 top-0 overflow-auto border rounded-md shadow-md">
-            {selectables.map((collection) => (
-              <CommandItem
-                key={collection._id}
-                onMouseDown={(e) => e.preventDefault()}
-                onSelect={() => {
-                  onChange(collection._id);
-                  setInputValue("");
-                }}
-                className="hover:bg-grey-2 cursor-pointer"
-              >
-                {collection.title}
-              </CommandItem>
-            ))}
-          </CommandGroup>
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandGroup className="absolute w-full z-30 top-0 overflow-auto border rounded-md shadow-md">
+              {selectables.map((collection) => (
+                <CommandItem
+                  key={collection._id}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onSelect={() => {
+                    onChange(collection._id);
+                    setInputValue("");
+                  }}
+                  className="hover:bg-grey-2 cursor-pointer text-black"
+                >
+                  {collection.title}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
         )}
       </div>
     </Command>
